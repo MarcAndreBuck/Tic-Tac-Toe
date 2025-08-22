@@ -44,3 +44,61 @@ td:hover {
 background-color: rgba( 255,255,255,0.3);
 cursor: pointer;
 }
+
+/* UI-Bar über dem Board */
+.ui-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+/* Buttons */
+.btn, .btn-toggle {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: transform .05s ease, background .2s ease, border-color .2s ease;
+  font: inherit;
+}
+.btn:hover, .btn-toggle:hover { background: rgba(255,255,255,0.14); }
+.btn:active, .btn-toggle:active { transform: translateY(1px); }
+.btn.primary { background: #00B0EF; border-color: #00B0EF; color: #111; }
+
+/* Toggle-Schaltflächen */
+.btn-toggle.is-active {
+  background: #fff;
+  color: #111;
+  border-color: #fff;
+}
+.btn-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.btn-row.end { justify-content: flex-end; }
+.btn-toggle span { margin-left: 6px; }
+
+/* Overlay */
+.settings-overlay {
+  position: absolute; inset: 0;
+  align-items: center; justify-content: center;
+  z-index: 5;
+}
+.settings-overlay .backdrop {
+  position: absolute; inset: 0; background: rgba(0,0,0,.6);
+}
+.settings-overlay .modal {
+  position: relative; z-index: 6;
+  background: #222; color: #fff;
+  padding: 16px 20px; border-radius: 12px;
+  width: min(90vw, 380px);
+  box-shadow: 0 10px 30px rgba(0,0,0,.5);
+}
+.settings-overlay .modal h3 { margin: 0 0 10px; }
+.settings-overlay .modal .group { margin-bottom: 12px; }
+.settings-overlay .modal .label { margin-bottom: 6px; opacity: .85; font-size: 14px; }
+.settings-overlay .modal .hint  { margin-top: 8px; font-size: 12px; opacity: .7; }
