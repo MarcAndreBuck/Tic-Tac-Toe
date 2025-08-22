@@ -1,0 +1,46 @@
+/* Seite allgemein */
+body {
+  background-color: #323232;
+  font-family: 'Open Sans', sans-serif;
+  color: white; /* Text generell sichtbar machen */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* volle Höhe */
+  margin: 0;
+}
+
+/* Tic-Tac-Toe Board */
+.board {
+  border-collapse: collapse; /* verhindert doppelte Linien */
+}
+
+.board .cell {
+  width: 80px;
+  height: 80px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 40px;
+  font-weight: 700;
+  color: white;
+  border: 5px solid white;
+}
+
+/* Nur innere Linien sichtbar lassen */
+.board tr:first-child .cell {
+  border-top: none;
+}
+.board tr:last-child .cell {
+  border-bottom: none;
+}
+.board tr .cell:first-child {
+  border-left: none;
+}
+.board tr .cell:last-child {
+  border-right: none;
+}
+
+td:hover {
+background-color: rgba( 255,255,255,0.3);
+cursor: pointer;
+}
