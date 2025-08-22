@@ -10,8 +10,29 @@ let fields = [
     'circle'
 ];
 
-const SYMBOLS = { cross: crossSVG() , circle: circleSVG() };
+// SVG-Funktionen (hier als Referenz genutzt – sie müssen bereits existieren)
+const SYMBOLS = {
+  cross: () => crossSVG(),   // falls deine Funktion anders heißt: crossStrokeSVG()
+  circle: () => circleSVG()  // ggf. circleStrokeSVG()
+};
 
+// Nächster Zug anhand der bisherigen Belegungen (immer abwechselnd)
+function getNextSymbol() {
+  const crosses = fields.filter(v => v === 'cross').length;
+  const circles = fields.filter(v => v === 'circle').length;
+  return crosses <= circles ? 'cross' : 'circle';
+}
+
+// Klick-Handler für Zellen
+function handleCellClick(tdEl, index) {
+  if (fields[index] !== null) return;           // schon belegt -> ignorieren
+  const symbol = getNextSymbol();               // 'cross' oder 'circle'
+  fields[index] = symbol;                       // Zustand updaten
+  tdEl.innerHTML = SYMBOLS[symbol]();           // SVG in die Zelle schreiben
+  tdEl.removeAttribute('onclick');              // weiteren Klick deaktivieren
+}
+
+// Render-Funktion
 function render() {
   const parts = [];
   parts.push('<table class="board">');
@@ -21,8 +42,9 @@ function render() {
     for (let col = 0; col < 3; col++) {
       const i = row * 3 + col;
       const val = fields[i];
-      const content = val ? `<span class="mark ${val}">${SYMBOLS[val]}</span>` : '';
-      parts.push(`<td class="cell" data-index="${i}">${content}</td>`);
+      const content = val ? SYMBOLS[val]() : '';
+      const onclick = val ? '' : ` onclick="handleCellClick(this, ${i})"`;
+      parts.push(`<td class="cell" data-index="${i}"${onclick}>${content}</td>`);
     }
     parts.push('</tr>');
   }
@@ -65,36 +87,35 @@ function crossSVG({
   size = 70,
   color = '#FFC000',
   strokeWidth = 8,
-  perStrokeDuration = 125, // ms pro Strich -> gesamt 250ms
-  margin = 10              // Innenabstand, damit nichts abgeschnitten wird
+  perStrokeDuration = 125, // ms pro Strich
+  margin = 10
 } = {}) {
-  const s = size;
-  const m = margin;
-  const x1 = m,         y1 = m;
-  const x2 = s - m,     y2 = s - m;
-  const x3 = s - m,     y3 = m;
-  const x4 = m,         y4 = s - m;
+  const s = size, m = margin;
+  const x1 = m,     y1 = m;
+  const x2 = s - m, y2 = s - m;
+  const x3 = s - m, y3 = m;
+  const x4 = m,     y4 = s - m;
 
   return `
 <svg width="${s}" height="${s}" viewBox="0 0 ${s} ${s}" role="img" aria-label="Animated cross">
   <g fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">
     <!-- Erster Strich: "\" -->
-    <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100">
-      <animate id="draw1"
-        attributeName="stroke-dashoffset"
-        from="100" to="0"
-        dur="${perStrokeDuration}ms"
-        fill="freeze" />
+    <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+          pathLength="100" stroke-dasharray="100" stroke-dashoffset="100">
+      <animate attributeName="stroke-dashoffset"
+               from="100" to="0"
+               dur="${perStrokeDuration}ms"
+               fill="freeze" />
     </line>
 
-    <!-- Zweiter Strich: "/" startet nach draw1 -->
-    <line x1="${x3}" y1="${y3}" x2="${x4}" y2="${y4}" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100">
-      <animate
-        attributeName="stroke-dashoffset"
-        from="100" to="0"
-        begin="draw1.end"
-        dur="${perStrokeDuration}ms"
-        fill="freeze" />
+    <!-- Zweiter Strich: "/" startet zeitversetzt -->
+    <line x1="${x3}" y1="${y3}" x2="${x4}" y2="${y4}"
+          pathLength="100" stroke-dasharray="100" stroke-dashoffset="100">
+      <animate attributeName="stroke-dashoffset"
+               from="100" to="0"
+               begin="${perStrokeDuration}ms"
+               dur="${perStrokeDuration}ms"
+               fill="freeze" />
     </line>
   </g>
 </svg>
